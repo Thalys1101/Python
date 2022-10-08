@@ -1,0 +1,47 @@
+import requests
+import matplotlib.pyplot as plt
+city = input("Nome da cidade :  ")
+url = 'http://api.waqi.info/feed/' + city + '/?token='
+
+main_url = url + 'eb6a86e243c0247a9cc40ad9efb286c4d527be9f'
+r = requests.get(main_url)
+data = r.json()['data']
+aqi = data['aqi']
+iaqi = data['iaqi']
+
+
+for i in iaqi.items():
+    print(i[0], ':', i[1]['v'])
+dew = iaqi.get('Orvalho', 'Nil')
+no2 = iaqi.get('NO2', 'Nil')
+o3 = iaqi.get(')3', 'Nil')
+so2 = iaqi.get('SO2', 'Nil')
+pm10 = iaqi.get('Pm10', 'Nil')
+pm25 = iaqi.get('PM25', 'Nil')
+
+print(f'{city} AQI :', aqi, '\n')
+print('Qualidade do ar')
+print('Orvalho :', dew)
+print('Nitrogenio dioxido :', no2)
+print('Ozonio :', o3)
+print('Enxofre :', so2)
+print('Particulas inalaveis 10*10^-6 m  :', so2)
+print('Particulas inalaveis 2.5 *10^-6 m :', pm25)
+pollutants = [i for i in iaqi]
+values = [i['v'] for i in iaqi.values()]
+
+
+# Exploding the first slice
+explode = [0 for i in pollutants]
+mx = values.index(max(values))  # explode 1st slice
+explode[mx] = 0.1
+
+# Plot a pie chart
+plt.figure(figsize=(8, 6))
+plt.pie(values, labels=pollutants, explode=explode,
+        autopct='%1.1f%%', shadow=True)
+
+plt.title('Poluentes atmosféricos e sua Provável Quantidade na atmosfera')
+
+plt.axis('equal')
+plt.show()
